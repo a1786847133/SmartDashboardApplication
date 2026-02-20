@@ -23,12 +23,6 @@ In the info panel, you can see:
 - **City of Seattle SDOT – Collisions (All Years)**  
   Exported as GeoJSON and filtered to the project’s time window (2024-01-10 to 2025-01-17).
 
-### Additional geospatial dataset
-This lab also needs “other geospatial datasets.” In addition to the collision points, I recommend including one contextual boundary layer such as:
-- Seattle city boundary, council districts, or neighborhoods (Seattle Open Data / SeattleCityGIS)
-
-This helps interpret spatial patterns (e.g., collisions clustering by neighborhood or district) instead of looking at points in isolation. If you haven’t added this layer yet, it’s a quick improvement: download a boundary GeoJSON, place it in `data/`, then add a simple line/fill layer in Mapbox.
-
 ## Why a proportional symbol map
 I used a **proportional symbol map** because collisions are point-based events. A proportional symbol layer is a natural way to show both:
 1) **Where collisions happen**, and  
