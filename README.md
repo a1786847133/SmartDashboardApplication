@@ -1,48 +1,65 @@
-# Smart Dashboard: Parking and Traffic in Seattle
+# Smart Dashboard: Seattle Traffic Collisions (2024–2025)
 
-This project is a smart dashboard built from the Lab template (Mapbox + C3.js). The goal is to help people explore how parking availability and cost might relate to traffic conditions in Seattle, and to make it easy to compare different parts of the city through an interactive map and linked charts. :contentReference[oaicite:1]{index=1}
+This repository contains a smart dashboard built with Mapbox GL JS and C3.js. The dashboard visualizes traffic collisions in Seattle using an interactive proportional symbol map and linked charts. It’s designed to make collision patterns easy to explore by location, time, and severity.
 
 ## Live dashboard
-https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPOSITORY_NAME/
+https://a1786847133.github.io/SmartDashboardApplication/
 
-## What this dashboard shows
-This dashboard focuses on a practical Seattle mobility question: where can drivers park, and what does traffic look like around those locations? It is designed for people who drive into the city but may want to park and then switch to transit—especially for busy destinations (downtown, events, game days, etc.). :contentReference[oaicite:2]{index=2}
+## What this dashboard does
+The dashboard focuses on one geographic phenomenon: **traffic collisions in Seattle**.
 
-On the map, you can:
-- view parking facilities (garages and lots) and inspect their attributes
-- view traffic flow patterns and compare areas with heavier vs. lighter traffic
-- use filters and the reset button to explore different conditions
-- see the information panel update based on what you’re currently looking at on the map (viewport-based summary)
+On the map, collisions are displayed as **proportional symbols**:
+- **Symbol size** represents severity using `injuries + serious injuries + fatalities`
+- **Symbol color** represents collision severity code
+- The right panel updates dynamically as you change the **date range**, **severity**.
 
-## Data sources
-This project uses public Seattle geospatial datasets:
+In the info panel, you can see:
+- **KPI counters** (collisions, injuries, fatalities)
+- A **time chart** showing collisions over time (based on what is currently visible on the map)
+- A legend and a reset button for exploration
 
-- **Public Garages and Parking Lots** (SeattleCityGIS Open Data) :contentReference[oaicite:3]{index=3}  
-- **2022 Traffic Flow** (Seattle GeoData) :contentReference[oaicite:4]{index=4}  
+## Data
+### Primary dataset
+- **City of Seattle SDOT – Collisions (All Years)**  
+  Exported as GeoJSON and filtered to the project’s time window (2024-01-10 to 2025-01-17).
 
-These datasets give a foundation for mapping parking supply and traffic conditions, and they can be extended later with other mobility indicators (transit access, pricing, etc.). :contentReference[oaicite:5]{index=5}
+### Additional geospatial dataset
+This lab also needs “other geospatial datasets.” In addition to the collision points, I recommend including one contextual boundary layer such as:
+- Seattle city boundary, council districts, or neighborhoods (Seattle Open Data / SeattleCityGIS)
 
-## Map type choice (why proportional symbols)
-I used a proportional symbol approach because the parking dataset is made of discrete facilities (points). Proportional symbols let me show two things at once: *where* the facilities are and *how large/important* they are based on a numeric attribute (for example capacity, price level, or another proxy). Compared with a choropleth map, this avoids implying that values are evenly distributed across an entire neighborhood polygon when the phenomenon is actually tied to specific locations.
+This helps interpret spatial patterns (e.g., collisions clustering by neighborhood or district) instead of looking at points in isolation. If you haven’t added this layer yet, it’s a quick improvement: download a boundary GeoJSON, place it in `data/`, then add a simple line/fill layer in Mapbox.
 
-## Visualization components (at least two beyond the map)
-This dashboard includes multiple linked components so the map is not “just a map”:
+## Why a proportional symbol map
+I used a **proportional symbol map** because collisions are point-based events. A proportional symbol layer is a natural way to show both:
+1) **Where collisions happen**, and  
+2) **How severe they are**, using symbol size (injuries + serious injuries + fatalities)
 
-1. **Dynamic KPI cards** in the right panel  
-   These summarize what’s currently visible on screen (for example: number of parking facilities in view, total capacity in view, and a traffic summary indicator).
+A choropleth would require aggregating collisions to polygons (neighborhoods/tracts), which can hide hot spots at specific intersections and corridors. The proportional symbols keep the phenomenon tied to the actual event locations.
 
-2. **A time/summary chart (C3.js)**  
-   The chart helps compare patterns instead of forcing the user to click point-by-point. Depending on the dataset, it can show traffic counts over time, or a distribution summary such as traffic volume by road class / parking facilities by type.
+## Visualization components (beyond the map)
+This dashboard includes multiple linked components:
+1) **Dynamic KPI cards** that summarize the data currently in view (collisions, injuries, fatalities)
+2) **A C3.js chart** that visualizes collision counts over time (based on the current map view and filters)
 
-(Plus the dashboard also includes a legend, interactive popups, and reset/filter controls to support exploration.)
+Together, these components make the dashboard “smart” because the map and chart update each other as the user explores.
+
+## Connection to our final project idea
+This lab is also a stepping stone toward our final project dashboard. In our proposal, we planned to build a smart dashboard that explores how transportation conditions relate to human travel behavior in Seattle, integrating multiple datasets and letting users explore patterns interactively. :contentReference[oaicite:1]{index=1}
+
+Even though this lab focuses on collisions instead of parking/traffic flow, it builds the same core skills we need for the final project:
+- loading geospatial data into Mapbox and styling it
+- building a coordinated info panel with dynamic KPIs and charts
+- filtering and resetting views
+- designing a dashboard experience for real users
+
+Our proposal’s target users are Seattle drivers who sometimes want to park and switch to transit for busy destinations, and our final dashboard aims to support practical decision-making for mobility. :contentReference[oaicite:2]{index=2}  
+This collisions dashboard fits that direction because safety risk is part of the real-world driving experience. In the final project, collision risk can become an additional “mobility context layer” alongside parking supply, prices, and traffic conditions.
 
 ## How to run locally
-Because this is a static web project, you can run it with any simple local server.
+Because this is a static website, run it with any local server.
 
-Example (VS Code Live Server or Python):
+Example:
 - `python -m http.server 8000`
 - open `http://localhost:8000`
 
-## How to deploy (GitHub Pages)
-This repo is deployed via GitHub Pages so it can be accessed as:
-https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPOSITORY_NAME/
+## Project structure
