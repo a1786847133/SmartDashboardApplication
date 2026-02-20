@@ -1,4 +1,4 @@
-mapboxgl.accessToken = "YOUR_MAPBOX_TOKEN_HERE";
+mapboxgl.accessToken = "pk.eyJ1IjoianN1MyIsImEiOiJjbWhlZW45ZTcwZGR4Mm1wd2FoNmc1eGx4In0.1uDkRhqn0WIQeUtnhvLPOA";
 
 // --- Data source (Socrata / SODA) ---
 // Dataset: SDOT Collisions All Years (qdnv-25h8). :contentReference[oaicite:2]{index=2}
