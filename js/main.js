@@ -25,7 +25,6 @@ const map = new mapboxgl.Map({
 
 map.addControl(new mapboxgl.NavigationControl(), "top-left");
 
-// ---------- helpers ----------
 function n(x) {
   const v = Number(x);
   return Number.isFinite(v) ? v : 0;
@@ -50,7 +49,6 @@ function formatInt(x) {
   return Intl.NumberFormat().format(x);
 }
 
-// Filter by date + severity from UI
 function filterByControls(features) {
   const start = startInput.value ? new Date(startInput.value + "T00:00:00") : null;
   const end = endInput.value ? new Date(endInput.value + "T23:59:59") : null;
@@ -70,7 +68,6 @@ function filterByControls(features) {
   });
 }
 
-// Filter to current viewport
 function filterToViewport(features) {
   const b = map.getBounds();
   const west = b.getWest(), east = b.getEast(), south = b.getSouth(), north = b.getNorth();
@@ -85,7 +82,6 @@ function filterToViewport(features) {
   });
 }
 
-// ---------- KPI + chart ----------
 function updateKPIs(features) {
   let injuries = 0;
   let fatalities = 0;
@@ -135,7 +131,6 @@ function updateChart(features) {
   }
 }
 
-// ---------- map layer ----------
 function ensureMapLayer() {
   if (map.getSource("collisions")) return;
 
@@ -153,7 +148,6 @@ function ensureMapLayer() {
       "circle-stroke-color": "#111",
       "circle-stroke-width": 0.5,
 
-      // radius based on INJURIES + SERIOUSINJURIES + FATALITIES
       "circle-radius": [
         "interpolate",
         ["linear"],
@@ -169,7 +163,6 @@ function ensureMapLayer() {
         10, 18
       ],
 
-      // color by SEVERITYCODE
       "circle-color": [
         "match",
         ["to-string", ["coalesce", ["get", "SEVERITYCODE"], ""]],
@@ -216,23 +209,19 @@ function ensureMapLayer() {
   map.on("mouseleave", "collisions-circles", () => (map.getCanvas().style.cursor = ""));
 }
 
-// ---------- render ----------
 function render() {
   if (!fullData) return;
 
   const base = filterByControls(fullData.features || []);
   const inView = filterToViewport(base);
 
-  // Map shows only features currently visible in viewport
   ensureMapLayer();
   map.getSource("collisions").setData({ type: "FeatureCollection", features: inView });
 
-  // Right panel reflects only viewport-visible data
   updateKPIs(inView);
   updateChart(inView);
 }
 
-// ---------- boot ----------
 async function loadData() {
   const res = await fetch(DATA_URL);
   fullData = await res.json();
@@ -243,10 +232,8 @@ map.on("load", () => {
   loadData();
 });
 
-// Update when user changes filters
 [startInput, endInput, severitySelect].forEach(el => el.addEventListener("change", render));
 
-// Update when user pans/zooms (scroll wheel etc.)
 map.on("moveend", render);
 map.on("zoomend", render);
 
