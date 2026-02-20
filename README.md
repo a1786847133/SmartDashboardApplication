@@ -44,3 +44,5 @@ It builds the same core skills we need for the final project:
 - building a coordinated info panel with dynamic KPIs and charts
 - filtering and resetting views
 - designing a dashboard experience for real users
+
+For the time filter, our final project is tentatively set to use 2022 data, even though the time filter in this lab is currently set to 2024 data. I can modify the date filter in the data to align with our final project.
