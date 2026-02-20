@@ -1,5 +1,6 @@
-mapboxgl.accessToken = "pk.eyJ1IjoianN1MyIsImEiOiJjbWhlZW45ZTcwZGR4Mm1wd2FoNmc1eGx4In0.1uDkRhqn0WIQeUtnhvLPOA";
+mapboxgl.accessToken = "YOUR_MAPBOX_TOKEN_HERE";
 
+// Local GeoJSON in your repo
 const DATA_URL = "data/SDOT_Collisions_All_Years_873625411694151011.geojson";
 
 let fullData = null;
@@ -10,9 +11,12 @@ const endInput = document.getElementById("endDate");
 const severitySelect = document.getElementById("severity");
 const resetBtn = document.getElementById("resetBtn");
 
-// Default to 2025 (you can change anytime in the UI)
-startInput.value = "2025-01-01";
-endInput.value = "2025-12-31";
+// Default range (your dataset filter window)
+const DEFAULT_START = "2024-01-10";
+const DEFAULT_END = "2025-01-17";
+
+startInput.value = DEFAULT_START;
+endInput.value = DEFAULT_END;
 
 const map = new mapboxgl.Map({
   container: "map",
@@ -29,17 +33,14 @@ function n(x) {
   return Number.isFinite(v) ? v : 0;
 }
 
-// INCDATE in your export looks like: "Wed, 12 Jun 2024 00:00:00 GMT"
 function parseIncDate(p) {
   const s = p && p.INCDATE ? String(p.INCDATE) : "";
   if (!s) return null;
-
-  // Works in modern browsers for RFC1123 strings
   const d = new Date(s);
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
-function dateOnlyISO(d) {
+function isoDate(d) {
   return d.toISOString().slice(0, 10);
 }
 
@@ -47,24 +48,17 @@ function severityCode(p) {
   return p && p.SEVERITYCODE != null ? String(p.SEVERITYCODE).trim() : "";
 }
 
-function severityWeight(p) {
-  // severity proxy for proportional symbols
-  return n(p.INJURIES) + n(p.SERIOUSINJURIES) + n(p.FATALITIES);
-}
-
 function formatInt(x) {
   return Intl.NumberFormat().format(x);
 }
 
-// ---------- filtering ----------
-function getFilteredFeatures() {
-  if (!fullData) return [];
-
+// Filter by date + severity from UI
+function filterByControls(features) {
   const start = startInput.value ? new Date(startInput.value + "T00:00:00") : null;
   const end = endInput.value ? new Date(endInput.value + "T23:59:59") : null;
   const sev = severitySelect.value;
 
-  return (fullData.features || []).filter(f => {
+  return (features || []).filter(f => {
     const p = f.properties || {};
     const d = parseIncDate(p);
 
@@ -75,6 +69,21 @@ function getFilteredFeatures() {
     if (sev !== "ALL" && s !== sev) return false;
 
     return true;
+  });
+}
+
+// Filter to current viewport
+function filterToViewport(features) {
+  const b = map.getBounds();
+  const west = b.getWest(), east = b.getEast(), south = b.getSouth(), north = b.getNorth();
+
+  return (features || []).filter(f => {
+    const g = f.geometry;
+    if (!g || g.type !== "Point") return false;
+    const c = g.coordinates || [];
+    const lng = c[0], lat = c[1];
+    if (lng == null || lat == null) return false;
+    return lng >= west && lng <= east && lat >= south && lat <= north;
   });
 }
 
@@ -96,16 +105,13 @@ function updateKPIs(features) {
 
 function groupByDay(features) {
   const m = new Map();
-
   for (const f of features) {
     const p = f.properties || {};
     const d = parseIncDate(p);
     if (!d) continue;
-
-    const day = dateOnlyISO(d);
+    const day = isoDate(d);
     m.set(day, (m.get(day) || 0) + 1);
   }
-
   const arr = Array.from(m.entries()).map(([date, count]) => ({ date, count }));
   arr.sort((a, b) => a.date.localeCompare(b.date));
   return arr;
@@ -113,7 +119,6 @@ function groupByDay(features) {
 
 function updateChart(features) {
   const byDay = groupByDay(features);
-
   const x = ["x", ...byDay.map(d => d.date)];
   const y = ["collisions", ...byDay.map(d => d.count)];
 
@@ -132,7 +137,7 @@ function updateChart(features) {
   }
 }
 
-// ---------- map ----------
+// ---------- map layer ----------
 function ensureMapLayer() {
   if (map.getSource("collisions")) return;
 
@@ -150,7 +155,7 @@ function ensureMapLayer() {
       "circle-stroke-color": "#111",
       "circle-stroke-width": 0.5,
 
-      // radius based on severityWeight = INJURIES + SERIOUSINJURIES + FATALITIES
+      // radius based on INJURIES + SERIOUSINJURIES + FATALITIES
       "circle-radius": [
         "interpolate",
         ["linear"],
@@ -185,7 +190,7 @@ function ensureMapLayer() {
 
     const p = f.properties || {};
     const d = parseIncDate(p);
-    const day = d ? dateOnlyISO(d) : "";
+    const day = d ? isoDate(d) : "";
 
     const title = p.COLLISIONTYPE || "Collision";
     const loc = p.LOCATION || "";
@@ -213,17 +218,20 @@ function ensureMapLayer() {
   map.on("mouseleave", "collisions-circles", () => (map.getCanvas().style.cursor = ""));
 }
 
+// ---------- render ----------
 function render() {
   if (!fullData) return;
 
-  const features = getFilteredFeatures();
-  const fc = { type: "FeatureCollection", features };
+  const base = filterByControls(fullData.features || []);
+  const inView = filterToViewport(base);
 
+  // Map shows only features currently visible in viewport
   ensureMapLayer();
-  map.getSource("collisions").setData(fc);
+  map.getSource("collisions").setData({ type: "FeatureCollection", features: inView });
 
-  updateKPIs(features);
-  updateChart(features);
+  // Right panel reflects only viewport-visible data
+  updateKPIs(inView);
+  updateChart(inView);
 }
 
 // ---------- boot ----------
@@ -237,14 +245,18 @@ map.on("load", () => {
   loadData();
 });
 
-[startInput, endInput, severitySelect].forEach(el => {
-  el.addEventListener("change", render);
-});
+// Update when user changes filters
+[startInput, endInput, severitySelect].forEach(el => el.addEventListener("change", render));
+
+// Update when user pans/zooms (scroll wheel etc.)
+map.on("moveend", render);
+map.on("zoomend", render);
 
 resetBtn.addEventListener("click", () => {
   severitySelect.value = "ALL";
-  startInput.value = "2025-01-01";
-  endInput.value = "2025-12-31";
-  render();
+  startInput.value = DEFAULT_START;
+  endInput.value = DEFAULT_END;
+
   map.flyTo({ center: [-122.335167, 47.608013], zoom: 11 });
+  render();
 });
