@@ -1,6 +1,5 @@
-mapboxgl.accessToken = "YOUR_MAPBOX_TOKEN_HERE";
+mapboxgl.accessToken = "pk.eyJ1IjoianN1MyIsImEiOiJjbWhlZW45ZTcwZGR4Mm1wd2FoNmc1eGx4In0.1uDkRhqn0WIQeUtnhvLPOA";
 
-// Local GeoJSON in your repo
 const DATA_URL = "data/SDOT_Collisions_All_Years_873625411694151011.geojson";
 
 let fullData = null;
@@ -11,7 +10,6 @@ const endInput = document.getElementById("endDate");
 const severitySelect = document.getElementById("severity");
 const resetBtn = document.getElementById("resetBtn");
 
-// Default range (your dataset filter window)
 const DEFAULT_START = "2024-01-10";
 const DEFAULT_END = "2025-01-17";
 
