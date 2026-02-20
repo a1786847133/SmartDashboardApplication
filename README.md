@@ -1,3 +1,6 @@
+## AI statement
+I used AI only to explore and improve interface design (e.g., layout and UI wording). I did not use AI for the core idea, dashboard design decisions, or implementation of the dashboard. I did not use AI to write or complete any components where AI use is not allowed. I can explain and justify every coding decision in this project.
+
 # Smart Dashboard: Seattle Traffic Collisions (2024–2025)
 
 This repository contains a smart dashboard built with Mapbox GL JS and C3.js. The dashboard visualizes traffic collisions in Seattle using an interactive proportional symbol map and linked charts. It’s designed to make collision patterns easy to explore by location, time, and severity.
