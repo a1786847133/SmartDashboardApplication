@@ -2,6 +2,8 @@
 
 This repository contains a smart dashboard built with Mapbox GL JS and C3.js. The dashboard visualizes traffic collisions in Seattle using an interactive proportional symbol map and linked charts. It’s designed to make collision patterns easy to explore by location, time, and severity.
 
+![Dashboard screenshot](img/dashboard.png)
+
 ## Live dashboard
 https://a1786847133.github.io/SmartDashboardApplication/
 
