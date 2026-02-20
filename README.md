@@ -28,32 +28,17 @@ I used a **proportional symbol map** because collisions are point-based events. 
 1) **Where collisions happen**, and  
 2) **How severe they are**, using symbol size (injuries + serious injuries + fatalities)
 
-A choropleth would require aggregating collisions to polygons (neighborhoods/tracts), which can hide hot spots at specific intersections and corridors. The proportional symbols keep the phenomenon tied to the actual event locations.
+The proportional symbols keep the phenomenon tied to the actual event locations.
 
-## Visualization components (beyond the map)
-This dashboard includes multiple linked components:
+## Visualization components
 1) **Dynamic KPI cards** that summarize the data currently in view (collisions, injuries, fatalities)
 2) **A C3.js chart** that visualizes collision counts over time (based on the current map view and filters)
 
-Together, these components make the dashboard “smart” because the map and chart update each other as the user explores.
-
 ## Connection to our final project idea
-This lab is also a stepping stone toward our final project dashboard. In our proposal, we planned to build a smart dashboard that explores how transportation conditions relate to human travel behavior in Seattle, integrating multiple datasets and letting users explore patterns interactively. :contentReference[oaicite:1]{index=1}
+This lab is also a stepping stone toward our final project dashboard. I selected Seattle collision data that may be relevant to our final project. This choice is closely tied to our subsequent exploration of traffic flow and parking in Seattle, and may also help refine the direction and significance of our final project based on our lab work. This collisions dashboard fits that direction because safety risk is part of the real-world driving experience. In the final project, collision risk can become an additional “mobility context layer” alongside parking supply, prices, and traffic conditions.
 
-Even though this lab focuses on collisions instead of parking/traffic flow, it builds the same core skills we need for the final project:
+It builds the same core skills we need for the final project:
 - loading geospatial data into Mapbox and styling it
 - building a coordinated info panel with dynamic KPIs and charts
 - filtering and resetting views
 - designing a dashboard experience for real users
-
-Our proposal’s target users are Seattle drivers who sometimes want to park and switch to transit for busy destinations, and our final dashboard aims to support practical decision-making for mobility. :contentReference[oaicite:2]{index=2}  
-This collisions dashboard fits that direction because safety risk is part of the real-world driving experience. In the final project, collision risk can become an additional “mobility context layer” alongside parking supply, prices, and traffic conditions.
-
-## How to run locally
-Because this is a static website, run it with any local server.
-
-Example:
-- `python -m http.server 8000`
-- open `http://localhost:8000`
-
-## Project structure
