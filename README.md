@@ -25,8 +25,8 @@ In the info panel, you can see:
 
 ## Why a proportional symbol map
 I used a **proportional symbol map** because collisions are point-based events. A proportional symbol layer is a natural way to show both:
-1) **Where collisions happen**, and  
-2) **How severe they are**, using symbol size (injuries + serious injuries + fatalities)
+1) Where collisions happen  
+2) How severe they are, using symbol size (injuries + serious injuries + fatalities)
 
 The proportional symbols keep the phenomenon tied to the actual event locations.
 
